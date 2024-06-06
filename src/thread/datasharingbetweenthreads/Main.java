@@ -2,7 +2,7 @@ package thread.datasharingbetweenthreads;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        //this won't work properly because the inventoryCounter is not atomic
+
         InventoryCounter inventoryCounter = new InventoryCounter();
         IncrementingThread incrementingThread = new IncrementingThread(inventoryCounter);
         DecrementingThread decrementingThread = new DecrementingThread(inventoryCounter);
@@ -50,17 +50,25 @@ public class Main {
 
     private static class InventoryCounter {
         private int items = 0;
+         Object lock = new Object();
+
 
         public void increment() {
-            items++;
+            synchronized (this.lock) {
+                items++;
+            }
         }
 
         public void decrement() {
-            items--;
+            synchronized (this.lock) {
+                items--;
+            }
         }
 
         public int getItems() {
-            return items;
+            synchronized (this.lock) {
+                return items;
+            }
         }
     }
 }
